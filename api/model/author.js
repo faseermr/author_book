@@ -3,7 +3,10 @@ const mongoose = require("mongoose");
 const Author = mongoose.model(
   "Author",
   new mongoose.Schema({
-    name: String,
+    name: {
+      type: String,
+      required: [true, "This is required field"],
+    },
   })
 );
 

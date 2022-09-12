@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -6,6 +6,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
+import { Box, Typography } from "@material-ui/core";
+import authorServices from "../../services/authorServices";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,10 +36,26 @@ const useStyles = makeStyles((theme) => ({
 
 const AddBook = () => {
   const classes = useStyles();
+  const [authorList, setAuthorList] = useState([]);
+
+  // get all author list
+  const getAllAuthors = async () => {
+    const res = await authorServices.getAllAuthors();
+    setAuthorList(res.data);
+    //console.log(authorList);
+  };
+
+  useEffect(() => {
+    getAllAuthors();
+  }, []);
 
   return (
     <div className={classes.root}>
       <div>
+        <Typography variant="h4" color="textSecondary">
+          Add Book
+        </Typography>
+
         <FormControl variant="outlined" className={classes.formControl}>
           <TextField
             id="outlined-full-width"
@@ -54,7 +72,7 @@ const AddBook = () => {
           />
         </FormControl>
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="demo-simple-select-outlined-label">Age</InputLabel>
+          <InputLabel id="demo-simple-select-outlined-label">Author</InputLabel>
           <Select
             labelId="demo-simple-select-outlined-label"
             id="demo-simple-select-outlined"
@@ -62,18 +80,22 @@ const AddBook = () => {
             className={classes.select}
           >
             <MenuItem value="">
-              <em>None</em>
+              <em>-- Select --</em>
             </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
+            {authorList.map((val, idx) => {
+              return <MenuItem value={val.name}>{val.name}</MenuItem>;
+            })}
           </Select>
         </FormControl>
-      </div>
-      <div>
-        <Button variant="contained" color="primary" className={classes.button}>
-          Add
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+          >
+            Add
+          </Button>
+        </div>
       </div>
     </div>
   );
